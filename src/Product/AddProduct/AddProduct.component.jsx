@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 
 import Layout from '../../Shared/Components/Layout/Layout.component';
 import { isAuthenticated } from '../../Helpers/IsAuthenticated/IsAuthenticated';
-import { CreateProduct } from '../../API/APIAdmin/APIAdmin';
+import { CreateProduct, GetCategories } from '../../API/APIAdmin/APIAdmin';
 
 const AddProduct = () => {
-    const { user, token } = isAuthenticated();
+    
     const [values, setValues] = useState({
         name: '',
         description: '',
@@ -23,6 +23,7 @@ const AddProduct = () => {
         formData: ''
     });
 
+    const { user, token } = isAuthenticated();
     const { 
         name,
         description,
@@ -38,8 +39,19 @@ const AddProduct = () => {
         formData
      } = values;
 
+     // load categories and set form data
+     const init = () => {
+        GetCategories().then(data => {
+            if(data.error) {
+                setValues({ ...values, error: data.error });
+            } else {
+                setValues({ ...values, categories: data, formData: new FormData() });
+            }
+        });
+     };
+
      useEffect(() => {
-        setValues({ ...values, formData: new FormData() })
+        init();
      }, []);
 
      const handleChange = name => event => {
@@ -49,7 +61,26 @@ const AddProduct = () => {
      };
 
      const clickSubmit = (event) => {
-        
+        event.preventDefault();
+        setValues({ ...values, error: '', loading: true });
+
+        CreateProduct(user._id, token, formData)
+        .then(data => {
+            if(data.error) {
+                setValues({ ...values, error: data.error });
+            } else {
+                setValues({
+                    ...values,
+                    name: '',
+                    description: '',
+                    photo: '',
+                    price: '',
+                    quantity: '',
+                    loading: false,
+                    createdProduct: data.name
+                });
+            }
+        });
      };
 
      const newProductForm = () => (
@@ -79,13 +110,15 @@ const AddProduct = () => {
             <div className="form-group">
                 <label className="text-muted">Category</label>
                 <select onChange={ handleChange('category') } className="form-control">
-                    <option value="5de04caab3f4eb326d9898e3">Node</option>
+                    <option>Please Select</option>
+                    { categories && categories.map((category, index) => (<option key={ index } value={ category._id }> { category.name } </option>))}
                 </select>
             </div>
 
             <div className="form-group">
                 <label className="text-muted">Shipping</label>
                 <select onChange={ handleChange('shipping') } className="form-control">
+                    <option>Please Select</option>
                     <option value="0">No</option>
                     <option value="1">Yes</option>
                 </select>
@@ -100,10 +133,32 @@ const AddProduct = () => {
         </form>
      );
 
+     const showError = () => (
+        <div className="alert alert-danger" style={{ display: error ? '' : 'none' }}>
+            {error}
+        </div>
+    );
+
+    const showSuccess = () => (
+        <div className="alert alert-info" style={{ display: createdProduct ? '' : 'none' }}>
+            <h2>{`${createdProduct}`} is created!</h2>
+        </div>
+    );
+
+    const showLoading = () =>
+        loading && (
+            <div className="alert alert-success">
+                <h2>Loading...</h2>
+            </div>
+        );
+
     return (
         <Layout title="Add A New Product" description={ `Hello ${ user.name } Add A New Product` }>
             <div className="row">
                 <div className="col-md-8 offset-md-2">
+                    { showLoading() }
+                    { showSuccess() }
+                    { showError() }
                     { newProductForm() }
                 </div>
             </div>

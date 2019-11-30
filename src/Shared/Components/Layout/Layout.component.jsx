@@ -1,5 +1,7 @@
 import React from 'react';
+
 import Navigation from '../Navigation/Navigation.component';
+import '../../../styles.css'
 
 const Layout = ({ title = 'Title', description = 'Description', className, children }) => (
     <div>
