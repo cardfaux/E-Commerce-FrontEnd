@@ -13,6 +13,10 @@ import AddProduct from './Product/AddProduct/AddProduct.component';
 import Shop from './User/Pages/Shop/Shop.component';
 import Product from './Shared/Components/UIElements/ViewProduct/ViewProduct.component';
 import Cart from './Shared/Components/UIElements/Cart/Cart.component';
+import Orders from './API/APIAdmin/Orders/Orders';
+import Profile from './User/Components/Profile/Profile.component';
+import ManageProducts from './API/APIAdmin/ManageProducts/ManageProducts.component';
+import UpdateProduct from './API/APIAdmin/UpdateProduct/UpdateProduct.component';
 
 const Routes = () => {
     return (
@@ -28,6 +32,10 @@ const Routes = () => {
                 <AdminRoutes path="/create/product" exact component={ AddProduct } />
                 <Route path="/product/:productId" exact component={ Product } />
                 <Route path="/cart" exact component={ Cart } />
+                <AdminRoutes path="/admin/orders" exact component={ Orders } />
+                <PrivateRoutes path="/profile/:userId" exact component={ Profile } />
+                <AdminRoutes path="/admin/products" exact component={ ManageProducts } />
+                <AdminRoutes path="/admin/product/update/:productId" exact component={ UpdateProduct } />
             </Switch>
         </BrowserRouter>
     );
