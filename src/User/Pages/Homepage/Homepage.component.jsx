@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Card from '../../../Shared/Components/UIElements/Card/Card.component';
 import Layout from '../../../Shared/Components/Layout/Layout.component';
 import { GetProducts } from '../../../API/GetProducts/GetProducts';
+import Search from '../../../Shared/Components/UIElements/Search/Search.component';
 
 const Homepage = () => {
     const [productsBySell, setProductsBySell] = useState([]);
@@ -37,14 +38,23 @@ const Homepage = () => {
 
     return (
         <Layout title="Home Page" description="Node React E-Commerce Application" className="container-fluid">
+            <Search />
             <h2 className="mb-4">New Arrivals</h2>
             <div className="row">
-                { productsByArrival.map((product, index) => (<Card key={index} product={product} />)) }
+                { productsByArrival.map((product, index) => (
+                    <div key={ index } className="col-4 mb-3">
+                        <Card product={product} />
+                    </div>
+                ))}
             </div>
 
             <h2 className="mb-4">Best Sellers</h2>
             <div className="row">
-                { productsBySell.map((product, index) => (<Card key={index} product={product} />)) }
+                { productsBySell.map((product, index) => (
+                    <div key={ index } className="col-4 mb-3">
+                        <Card product={product} />
+                    </div>
+                ))}
             </div>
         </Layout>
     );
